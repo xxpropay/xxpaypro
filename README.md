@@ -9,13 +9,13 @@
 
 ### PayPro版本演示地址：
 
-运营端：[https://mgr.xxpaypro.com](https://mgr.xxpaypro.com) 账号:xxpaymgr 登录密码：111111abc
+运营端：https://mgr.xxpaypro.com
 
-代理端：[https://agent.xxpaypro.com](https://agent.xxpaypro.com) 账号：test001 登录密码：a123123123 支付密码：a123123123
+代理端：https://agent.xxpaypro.com
 
-商户端：[https://mch.xxpaypro.com](https://mch.xxpaypro.com) 账号：test 登录密码：a123123123 支付密码：a123123123
+商户端：https://mch.xxpaypro.com
 
-测试账号密码会定期更改，如不对请联系客服发新的账号密码
+如需要体验请联系客服获取最新的账号密码
 
 系统采用JAVA语言开发，会java的技术人员可以自行二次开发,是一套开箱即用、适合拿来直接运营的聚合支付系统。系统适合有技术团队的企业购买，我司可提供程序源码、技术文档和售后技术支持服务。
 
