@@ -34,7 +34,7 @@
 
 
 
-### 如需要最新完整商业版本请联系 飞机(Telegram)：[@am_0109](https://t.me/juuhepay)
+### 如需要最新完整商业版本请联系 飞机(Telegram)：[@am_0109](https://t.me/jeepays)
 
 
 
