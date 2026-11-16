@@ -1,40 +1,52 @@
+
 name: Auto commit
 
 on:
   push:
     branches:
       - main
+
   schedule:
-    - cron: "*/5 * * * *" # See https://crontab.guru/#*/2 * * * *
-  workflow_dispatch:  # 手动触发，方便调试
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
 
 permissions:
-  contents: write  # 核心：允许 GITHUB_TOKEN 推送提交
+  contents: write
+
+concurrency:
+  group: auto-commit-main
+  cancel-in-progress: false
 
 jobs:
   auto_commit:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
       - name: DEBUG
-        run: echo "::debug::Ref = ${{ github.ref }}"
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "UTC Time: $(date -u '+%Y-%m-%d %H:%M:%S')"
 
-      - uses: actions/checkout@v7
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          persist-credentials: false
+          ref: main
           fetch-depth: 0
 
       - name: Modify last update
         run: |
-          d=$(date '+%Y-%m-%dT%H:%M:%SZ')
-          echo "$d" > LAST_UPDATED
+          date -u '+%Y-%m-%dT%H:%M:%SZ' > LAST_UPDATED
 
       - name: Commit changes
         run: |
           git config --local user.email "server@ctr.cc.cd"
           git config --local user.name "jeepayplus"
+
           git add -A
 
-          # 如果没有变更，直接跳过，避免空提交失败
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
@@ -57,8 +69,5 @@ jobs:
           git commit -m "${arr[$rand]}"
 
       - name: GitHub Push
-        uses: ad-m/github-push-action@v1.3.0
-        with:
-          directory: "."
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref_name }}  # 显式指定分支，避免 detached HEAD 问题
+        run: |
+          git push origin HEAD:main
