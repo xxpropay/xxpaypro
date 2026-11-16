@@ -1,0 +1,64 @@
+name: Auto commit
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "36 18,7,11 * * 1,4"
+  workflow_dispatch:  # 手动触发，方便调试
+
+permissions:
+  contents: write  # 核心：允许 GITHUB_TOKEN 推送提交
+
+jobs:
+  auto_commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: DEBUG
+        run: echo "::debug::Ref = ${{ github.ref }}"
+
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Modify last update
+        run: |
+          d=$(date '+%Y-%m-%dT%H:%M:%SZ')
+          echo "$d" > LAST_UPDATED
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "server@ctr.cc.cd"
+          git config --local user.name "jeepayplus"
+          git add -A
+
+          # 如果没有变更，直接跳过，避免空提交失败
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          arr=(
+            "chore(bot): 😂 auto commit"
+            "chore(bot): 😱 auto commit"
+            "chore(bot): 👿 auto commit"
+            "chore(bot): 💩 auto commit"
+            "chore(bot): 🙏 auto commit"
+            "chore(bot): 🙈 auto commit"
+            "chore(bot): 🐐 auto commit"
+            "chore(bot): 🤖 auto commit"
+            "chore(bot): 🟩 auto commit"
+            "chore(bot): 👻 auto commit"
+          )
+
+          rand=$((RANDOM % ${#arr[@]}))
+          git commit -m "${arr[$rand]}"
+
+      - name: GitHub Push
+        uses: ad-m/github-push-action@v1.3.0
+        with:
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref_name }}  # 显式指定分支，避免 detached HEAD 问题
